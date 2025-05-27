@@ -120,7 +120,7 @@ class _ResBodySideState<T> extends State<ResBodySide<T>> {
             if (!isFullScreen && (!_isBodyHided))
               SizedBox(
                   width: (_isSideHided
-                      ? constraints.maxWidth - 30
+                      ? constraints.maxWidth - 20
                       : constraints.maxWidth * bodyWidth),
                   child: bodyWidget),
             if (!isFullScreen && sideWidget != null) _sideBar(constraints),

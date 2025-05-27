@@ -24,6 +24,7 @@ class ResBodySideFixed<T> extends StatefulWidget {
   final Function()? onClose;
   final bool hideBody;
   final bool hideSide;
+  final bool enableFullScreenIcon;
   final Widget slideWidget;
   final double minSideWidth;
   final double maxSideWidth;
@@ -46,6 +47,7 @@ class ResBodySideFixed<T> extends StatefulWidget {
     this.topPosition = 10,
     this.hideBody = false,
     this.hideSide = false,
+    this.enableFullScreenIcon = true,
     this.onClose,
     this.slideWidget = const SeparateWidget(),
   })  : bodyBuilder = null,
@@ -71,6 +73,7 @@ class ResBodySideFixed<T> extends StatefulWidget {
     this.minSideWidth = 0,
     this.maxSideWidth = 500,
     this.topPosition = 10,
+    this.enableFullScreenIcon = true,
     this.onClose,
     this.slideWidget = const SeparateWidget(),
   })  : body = null,

@@ -15,13 +15,14 @@ class _ResBodySideFixedState<T> extends State<ResBodySideFixed<T>> {
 
   @override
   void didUpdateWidget(covariant ResBodySideFixed<T> oldWidget) {
-    if (widget.initSelectedIndex != oldWidget.initSelectedIndex &&
-            widget.initSelectedIndex!=selectedIndex) {
-      selectedIndex = widget.initSelectedIndex;
-      if (selectedIndex >= 0) {
-        selectedModel = widget.initSelectedModel?.call(selectedIndex);
-      }
-      setState(() {});
+    if ((widget.initSelectedIndex != oldWidget.initSelectedIndex &&
+            widget.initSelectedIndex!=selectedIndex) ||
+        widget.initSelectedModel != oldWidget.initSelectedModel) {
+      // selectedIndex = widget.initSelectedIndex;
+      // if (selectedIndex >= 0) {
+      //   selectedModel = widget.initSelectedModel?.call(selectedIndex);
+      // }
+      // setState(() {});
     }
     if (widget.minBodyWidth != oldWidget.minBodyWidth) {
       setState(() {

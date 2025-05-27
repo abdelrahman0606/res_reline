@@ -43,10 +43,7 @@ class _SideWidgetState extends State<SideWidget> {
     TextDirection direction = Directionality.of(context);
     return SizedBox(
       width: widget.width,
-      child: MouseRegion(
-        onEnter: (_) => _changeHover(true),
-        onExit: (_) => _changeHover(false),
-        child: Stack(
+      child: Stack(
           children: [
             Center(
               child:
@@ -71,16 +68,18 @@ class _SideWidgetState extends State<SideWidget> {
               ),
           ],
         ),
-      ),
     );
   }
 
   void _changeHover(bool value) {
-    if (value != isHovered) {
-      setState(() {
-        isHovered = value;
-      });
-    }
+    if (widget.enableClose || widget.enableFullScreen)
+      {
+      if (value != isHovered) {
+        setState(() {
+          isHovered = value;
+        });
+      }
+  }
   }
 
   Widget _zoomButton() => FloatingActionButton.small(

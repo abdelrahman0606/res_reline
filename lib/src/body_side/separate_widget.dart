@@ -14,7 +14,7 @@ class _SeparateWidgetState extends State<SeparateWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20, top: 20, right: 10, left: 10),
+      padding: const EdgeInsets.only( right: 5, left: 5),
       child: MouseRegion(
         cursor: SystemMouseCursors.resizeColumn,
         onEnter: (_) => _onHover(true),
