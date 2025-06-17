@@ -8,8 +8,8 @@ class MyRes {
 
 
   static ResHelper instance({
-   required BuildContext context,
-    Size? size,
+    BuildContext? context,
+    Size? screenSize,
     Size? mobSSize,
     Size? mobMSize,
     Size? mobLSize,
@@ -22,6 +22,7 @@ class MyRes {
     BoxConstraints? constrains,
   }) => ResHelper(
     context: context,
+    screenSize: screenSize,
     constrains: constrains,
     mobSSize: mobSSize ,
     mobMSize: mobMSize ,

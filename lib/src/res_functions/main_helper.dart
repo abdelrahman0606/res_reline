@@ -14,15 +14,20 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
 
   factory ResHelper.of({BuildContext? context}) {
     if(_instance==null &&context ==null) return throw ArgumentError("context can not be null");
-    if(_instance!=null&&context!=null) {
-      _instance!.resizer =MediaQuery.sizeOf(context);
-    }
     _instance ??= ResHelper(context: context!);
+    try {
+      if (_instance != null && context != null) {
+        _instance!.context = context;
+      }
+    }catch(e){
+      print("eeeee$e");
+    }
     return _instance!;
   }
 
   factory ResHelper({
-  required  BuildContext context,
+    BuildContext? context,
+    Size? screenSize,
     Size? mobSSize,
     Size? mobMSize,
     Size? mobLSize,
@@ -35,7 +40,8 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
     BoxConstraints? constrains,
   }) {
     return ResHelper._(
-      size: MediaQuery.sizeOf(context),
+      context: context,
+      size: screenSize,
       mobSSize: mobSSize,
       mobMSize: mobMSize,
       mobLSize: mobLSize,
@@ -50,7 +56,8 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
   }
 
   ResHelper._({
-   required super.size,
+    super.context,
+    super.size,
     super.mobSSize,
     super.mobMSize,
     super.mobLSize,
@@ -199,7 +206,7 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
     if (isDesktopS) return width / getPlatSize.width * (dS ?? d);
     if (isDesktopM) return width / getPlatSize.width * d;
     if (isDesktopL) return width / getPlatSize.width * (dL ?? d);
-    return size.width / getPlatSize.width * m;
+    return screenSize.width / getPlatSize.width * m;
   }
 
   T? viewIfWidthGreatThan<T>({

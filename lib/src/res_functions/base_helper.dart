@@ -12,7 +12,8 @@ abstract class _BaseResHelper {
     Size? deskMSize,
     Size? deskLSize,
     this.constrains,
-    required this.size,
+    this.size,
+    this.context,
   }):
   mobSSize = mobSSize ??= const Size(320, 568),
        mobMSize = mobMSize ??= const Size(375, 667),
@@ -23,8 +24,12 @@ abstract class _BaseResHelper {
        deskSSize = deskSSize ??= const Size(1024, 768),
        deskMSize = deskMSize ??= const Size(1366, 768),
        deskLSize = deskLSize ??= const Size(1920, 1080) ;
-  late Size size;
 
+  late Size? size;
+  late BuildContext? context;
+  Size get screenSize =>size ?? MediaQuery.sizeOf(context!);
+  double get width => screenSize.width;
+  double get height => screenSize.height;
   set resizer(Size size) =>this.size=size;
 
   /// plats width
@@ -69,11 +74,6 @@ abstract class _BaseResHelper {
           constrains == null);
 
   /// get
-
-  double get width => size.width;
-
-  double get height => size.height;
-
 
 
   Size get getPlatSize {
