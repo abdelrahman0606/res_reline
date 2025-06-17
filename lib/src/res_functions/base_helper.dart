@@ -2,7 +2,6 @@ part of 'main_helper.dart';
 
 abstract class _BaseResHelper {
   _BaseResHelper._({
-    BuildContext? context,
     Size? mobSSize,
     Size? mobMSize,
     Size? mobLSize,
@@ -13,7 +12,9 @@ abstract class _BaseResHelper {
     Size? deskMSize,
     Size? deskLSize,
     this.constrains,
-  }) : mobSSize = mobSSize ??= const Size(320, 568),
+    required this.size,
+  }):
+  mobSSize = mobSSize ??= const Size(320, 568),
        mobMSize = mobMSize ??= const Size(375, 667),
        mobLSize = mobLSize ??= const Size(500, 896),
        tabSSize = tabSSize ??= const Size(768, 1024),
@@ -21,15 +22,10 @@ abstract class _BaseResHelper {
        tabLSize = tabLSize ??= const Size(900, 1280),
        deskSSize = deskSSize ??= const Size(1024, 768),
        deskMSize = deskMSize ??= const Size(1366, 768),
-       deskLSize = deskLSize ??= const Size(1920, 1080) {
-    if (context != null) {
-      _context = context;
-    }
-  }
+       deskLSize = deskLSize ??= const Size(1920, 1080) ;
+  late Size size;
 
-  late BuildContext _context;
-
-  set context(BuildContext context) => _context = context;
+  set resizer(Size size) =>this.size=size;
 
   /// plats width
   final Size mobSSize;
@@ -73,21 +69,12 @@ abstract class _BaseResHelper {
           constrains == null);
 
   /// get
-  Size get size => _pageSize ?? MediaQuery.sizeOf(_context);
 
   double get width => size.width;
 
   double get height => size.height;
 
-  MediaQueryData get mediaQuery => MediaQuery.of(_context);
 
-  double get devicePixelRatio => mediaQuery.devicePixelRatio;
-
-  double get aspectRatio => size.aspectRatio;
-
-  Size? _pageSize;
-
-  set resize(Size? value) => _pageSize = value;
 
   Size get getPlatSize {
     return switch (getPlat) {

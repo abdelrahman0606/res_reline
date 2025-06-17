@@ -67,7 +67,7 @@ class _ResPageSizerState extends State<ResPageSizer> {
       duration: const Duration(milliseconds: 500),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          rs.resize = Size(constraints.maxWidth, constraints.maxHeight);
+          rs.resizer = Size(constraints.maxWidth, constraints.maxHeight);
           return widget.builder(context, constraints, rs);
         },
       ),

@@ -20,8 +20,8 @@ class _Screen2State extends State<Screen2> {
       body:  Center(
         child: Column(
           children: [
-            Widget1(),
-            Widget2(),
+            //Widget1(),
+            //Widget2(),
             Text('Screen 1', style: TextStyle(fontSize: 16.sp),),
           ],
         ),

@@ -67,10 +67,10 @@ class MyHomePage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Screen1()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => Screen1()),
+                // );
               },
               child: Text("Go to screen 1"),
             ),

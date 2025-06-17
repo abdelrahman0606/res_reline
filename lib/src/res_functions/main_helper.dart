@@ -3,49 +3,26 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:res_reline/src/res_functions/plate_type.dart';
+import 'package:res_reline/src/res_functions/res_context.dart';
 
 part 'base_helper.dart';
 
 part 'res_font.dart';
 
-class ResHelper extends _BaseResHelper with MyResFont  {
+class ResHelper extends _BaseResHelper with  MyResFont  {
   static ResHelper? _instance;
 
   factory ResHelper.of({BuildContext? context}) {
-    _instance ??= ResHelper.init(context: context);
-    return _instance!.._context = context ?? _instance!._context;
-  }
-
-  factory ResHelper.init({
-    BuildContext? context,
-    Size? mobSSize,
-    Size? mobMSize,
-    Size? mobLSize,
-    Size? tabSSize,
-    Size? tabMSize,
-    Size? tabLSize,
-    Size? deskSSize,
-    Size? deskMSize,
-    Size? deskLSize,
-    BoxConstraints? constrains,
-  }) {
-    return _instance = ResHelper._(
-      context: context,
-      mobSSize: mobSSize,
-      mobMSize: mobMSize,
-      mobLSize: mobLSize,
-      tabSSize: tabSSize,
-      tabMSize: tabMSize,
-      tabLSize: tabLSize,
-      deskSSize: deskSSize,
-      deskMSize: deskMSize,
-      deskLSize: deskLSize,
-      constrains: constrains,
-    );
+    if(_instance==null &&context ==null) return throw ArgumentError("context can not be null");
+    if(_instance!=null&&context!=null) {
+      _instance!.resizer =MediaQuery.sizeOf(context);
+    }
+    _instance ??= ResHelper(context: context!);
+    return _instance!;
   }
 
   factory ResHelper({
-    BuildContext? context,
+  required  BuildContext context,
     Size? mobSSize,
     Size? mobMSize,
     Size? mobLSize,
@@ -58,7 +35,7 @@ class ResHelper extends _BaseResHelper with MyResFont  {
     BoxConstraints? constrains,
   }) {
     return ResHelper._(
-      context: context,
+      size: MediaQuery.sizeOf(context),
       mobSSize: mobSSize,
       mobMSize: mobMSize,
       mobLSize: mobLSize,
@@ -73,7 +50,7 @@ class ResHelper extends _BaseResHelper with MyResFont  {
   }
 
   ResHelper._({
-    super.context,
+   required super.size,
     super.mobSSize,
     super.mobMSize,
     super.mobLSize,
@@ -136,7 +113,8 @@ class ResHelper extends _BaseResHelper with MyResFont  {
     double? tL,
     double? dS,
     double? dL,
-  }) {
+  })
+  {
     if (isMobileS) return width * (mS ?? m);
     if (isMobileM) return width * m;
     if (isMobileL) return width * (mL ?? m);
@@ -221,7 +199,7 @@ class ResHelper extends _BaseResHelper with MyResFont  {
     if (isDesktopS) return width / getPlatSize.width * (dS ?? d);
     if (isDesktopM) return width / getPlatSize.width * d;
     if (isDesktopL) return width / getPlatSize.width * (dL ?? d);
-    return MediaQuery.of(_context).size.width / getPlatSize.width * m;
+    return size.width / getPlatSize.width * m;
   }
 
   T? viewIfWidthGreatThan<T>({
