@@ -11,17 +11,14 @@ part 'res_font.dart';
 
 class ResHelper extends _BaseResHelper with  MyResFont  {
   static ResHelper? _instance;
-
+  //one instance of ResHelper for all app
+  //but can be updated by context
   factory ResHelper.of({BuildContext? context}) {
     if(_instance==null &&context ==null) return throw ArgumentError("context can not be null");
     _instance ??= ResHelper(context: context!);
-    try {
       if (_instance != null && context != null) {
         _instance!.context = context;
       }
-    }catch(e){
-      print("eeeee$e");
-    }
     return _instance!;
   }
 
