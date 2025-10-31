@@ -9,5 +9,7 @@ export 'src/body_side/body_side.dart';
 export 'src/body_side/body_side_fixed.dart';
 export 'src/res_builder.dart';
 export 'src/pages/sliver_page_sizer.dart';
+//tools
+export 'src/tools/sliver_grid_delegate.dart';
 
 // TODO: Export any libraries intended for clients of this package.
