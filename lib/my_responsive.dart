@@ -9,6 +9,7 @@ export 'src/body_side/body_side.dart';
 export 'src/body_side/body_side_fixed.dart';
 export 'src/res_builder.dart';
 export 'src/pages/sliver_page_sizer.dart';
+export 'src/res_layout_break_boint.dart';
 //tools
 export 'src/tools/sliver_grid_delegate.dart';
 

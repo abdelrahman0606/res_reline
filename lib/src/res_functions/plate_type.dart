@@ -1,4 +1,4 @@
-enum ResPlateType {
+enum ScreenType {
   isMobileS,
   isMobileM,
   isMobileL,
@@ -10,18 +10,18 @@ enum ResPlateType {
   isDesktopL,
   outOfRange,
 }
-extension PlatTypeEx on ResPlateType {
+extension PlatTypeEx on ScreenType {
   String get toMap => switch (this) {
-    ResPlateType.isMobileS => "MobileS",
-    ResPlateType.isMobileM => "MobileM",
-    ResPlateType.isMobileL => "MobileL",
-    ResPlateType.isTabletS => "TabletS",
-    ResPlateType.isTabletM => "TabletM",
-    ResPlateType.isTabletL => "TabletL",
-    ResPlateType.isDesktopS => "DesktopS",
-    ResPlateType.isDesktopM => "DesktopM",
-    ResPlateType.isDesktopL => "DesktopL",
-    ResPlateType.outOfRange => "OutOfRange",
+    ScreenType.isMobileS => "MobileS",
+    ScreenType.isMobileM => "MobileM",
+    ScreenType.isMobileL => "MobileL",
+    ScreenType.isTabletS => "TabletS",
+    ScreenType.isTabletM => "TabletM",
+    ScreenType.isTabletL => "TabletL",
+    ScreenType.isDesktopS => "DesktopS",
+    ScreenType.isDesktopM => "DesktopM",
+    ScreenType.isDesktopL => "DesktopL",
+    ScreenType.outOfRange => "OutOfRange",
   };
 
 

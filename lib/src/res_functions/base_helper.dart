@@ -78,32 +78,32 @@ abstract class _BaseResHelper {
 
   Size get getPlatSize {
     return switch (getPlat) {
-      ResPlateType.isMobileS => mobSSize,
-      ResPlateType.isMobileM => mobMSize,
-      ResPlateType.isMobileL => mobLSize,
-      ResPlateType.isTabletS => tabSSize,
-      ResPlateType.isTabletM => tabMSize,
-      ResPlateType.isTabletL => tabLSize,
-      ResPlateType.isDesktopS => deskSSize,
-      ResPlateType.isDesktopM => deskMSize,
-      ResPlateType.isDesktopL => deskLSize,
-      ResPlateType.outOfRange => deskLSize,
+      ScreenType.isMobileS => mobSSize,
+      ScreenType.isMobileM => mobMSize,
+      ScreenType.isMobileL => mobLSize,
+      ScreenType.isTabletS => tabSSize,
+      ScreenType.isTabletM => tabMSize,
+      ScreenType.isTabletL => tabLSize,
+      ScreenType.isDesktopS => deskSSize,
+      ScreenType.isDesktopM => deskMSize,
+      ScreenType.isDesktopL => deskLSize,
+      ScreenType.outOfRange => deskLSize,
     };
   }
 
-  ResPlateType get getPlat {
-    if (isMobileS) return ResPlateType.isMobileS;
-    if (isMobileM) return ResPlateType.isMobileM;
-    if (isMobileL) return ResPlateType.isMobileL;
-    if (isTabletS) return ResPlateType.isTabletS;
-    if (isTabletM) return ResPlateType.isTabletM;
-    if (isTabletL) return ResPlateType.isTabletL;
-    if (isDesktopS) return ResPlateType.isDesktopS;
-    if (isDesktopM) return ResPlateType.isDesktopM;
+  ScreenType get getPlat {
+    if (isMobileS) return ScreenType.isMobileS;
+    if (isMobileM) return ScreenType.isMobileM;
+    if (isMobileL) return ScreenType.isMobileL;
+    if (isTabletS) return ScreenType.isTabletS;
+    if (isTabletM) return ScreenType.isTabletM;
+    if (isTabletL) return ScreenType.isTabletL;
+    if (isDesktopS) return ScreenType.isDesktopS;
+    if (isDesktopM) return ScreenType.isDesktopM;
     if (isDesktopL) {
-      return ResPlateType.isDesktopL;
+      return ScreenType.isDesktopL;
     } else {
-      return ResPlateType.outOfRange;
+      return ScreenType.outOfRange;
     }
 
   }

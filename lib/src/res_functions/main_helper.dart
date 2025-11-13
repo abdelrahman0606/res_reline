@@ -84,16 +84,16 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
   double anySizeBetween(double s, double l) {
     final start = (l - s) / 9;
     final responsiveValue = switch (getPlat) {
-      ResPlateType.isMobileS => start * 1,
-      ResPlateType.isMobileM => start * 2,
-      ResPlateType.isMobileL => start * 3,
-      ResPlateType.isTabletS => start * 4,
-      ResPlateType.isTabletM => start * 5,
-      ResPlateType.isTabletL => start * 6,
-      ResPlateType.isDesktopS => start * 7,
-      ResPlateType.isDesktopM => start * 8,
-      ResPlateType.isDesktopL => start * 9,
-      ResPlateType.outOfRange => start * 9,
+      ScreenType.isMobileS => start * 1,
+      ScreenType.isMobileM => start * 2,
+      ScreenType.isMobileL => start * 3,
+      ScreenType.isTabletS => start * 4,
+      ScreenType.isTabletM => start * 5,
+      ScreenType.isTabletL => start * 6,
+      ScreenType.isDesktopS => start * 7,
+      ScreenType.isDesktopM => start * 8,
+      ScreenType.isDesktopL => start * 9,
+      ScreenType.outOfRange => start * 9,
     };
     return (responsiveValue + width / 100).clamp(s, l);
   }
@@ -219,23 +219,23 @@ class ResHelper extends _BaseResHelper with  MyResFont  {
   }) => this.width <= width ? child : elseChild;
 
   T? viewIfEqualPlat<T>({
-    required ResPlateType platType,
+    required ScreenType platType,
     required T child,
     T? elseChild,
   }) => getPlat == platType ? child : elseChild;
 
   double padding(double v) {
     return switch (getPlat) {
-      ResPlateType.isMobileS => width * v / 1000,
-      ResPlateType.isMobileM => width * v / 1000,
-      ResPlateType.isMobileL => width * v / 900,
-      ResPlateType.isTabletS => width * v / 700,
-      ResPlateType.isTabletM => width * v / 600,
-      ResPlateType.isTabletL => width * v / 550,
-      ResPlateType.isDesktopS => width * v / 500,
-      ResPlateType.isDesktopM => width * v / 450,
-      ResPlateType.isDesktopL => width * v / 400,
-      ResPlateType.outOfRange => width * v / 400,
+      ScreenType.isMobileS => width * v / 1000,
+      ScreenType.isMobileM => width * v / 1000,
+      ScreenType.isMobileL => width * v / 900,
+      ScreenType.isTabletS => width * v / 700,
+      ScreenType.isTabletM => width * v / 600,
+      ScreenType.isTabletL => width * v / 550,
+      ScreenType.isDesktopS => width * v / 500,
+      ScreenType.isDesktopM => width * v / 450,
+      ScreenType.isDesktopL => width * v / 400,
+      ScreenType.outOfRange => width * v / 400,
     };
   }
 }
