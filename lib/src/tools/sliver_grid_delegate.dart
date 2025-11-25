@@ -4,7 +4,7 @@ class SliverGridDelegateWithResponsiveColumns extends SliverGridDelegate {
   final double childAspectRatio;
   final double crossAxisSpacing;
   final double mainAxisSpacing;
-  final Function(int crossAxisCount)? onCrossAxisCountChanged;
+  final Function(int crossAxisCount,double childHeight)? onCrossAxisCountChanged;
   const SliverGridDelegateWithResponsiveColumns({
     required this.minColumnWidth,
     required this.childAspectRatio,
@@ -22,7 +22,8 @@ class SliverGridDelegateWithResponsiveColumns extends SliverGridDelegate {
         (availableWidth - (actualColumnsCount - 1) * crossAxisSpacing) /
             actualColumnsCount;
     final childHeight = columnWidth / childAspectRatio;
-    onCrossAxisCountChanged?.call(actualColumnsCount);
+
+    onCrossAxisCountChanged?.call(actualColumnsCount,childHeight);
 
     return SliverGridRegularTileLayout(
       crossAxisCount: actualColumnsCount,
