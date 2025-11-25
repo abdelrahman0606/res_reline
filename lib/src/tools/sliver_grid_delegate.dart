@@ -1,16 +1,16 @@
 import 'package:flutter/rendering.dart';
-
 class SliverGridDelegateWithResponsiveColumns extends SliverGridDelegate {
   final double minColumnWidth;
   final double childAspectRatio;
   final double crossAxisSpacing;
   final double mainAxisSpacing;
-
+  final Function(int crossAxisCount)? onCrossAxisCountChanged;
   const SliverGridDelegateWithResponsiveColumns({
     required this.minColumnWidth,
     required this.childAspectRatio,
     this.crossAxisSpacing = 0,
     this.mainAxisSpacing = 0,
+    this.onCrossAxisCountChanged,
   });
 
   @override
@@ -22,6 +22,7 @@ class SliverGridDelegateWithResponsiveColumns extends SliverGridDelegate {
         (availableWidth - (actualColumnsCount - 1) * crossAxisSpacing) /
             actualColumnsCount;
     final childHeight = columnWidth / childAspectRatio;
+    onCrossAxisCountChanged?.call(actualColumnsCount);
 
     return SliverGridRegularTileLayout(
       crossAxisCount: actualColumnsCount,
