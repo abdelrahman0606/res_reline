@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:res_reline/src/res_functions/main_helper.dart';
 
-import 'main_responsive.dart';
-
+/// A widget that provides a [ResHelper] scoped to the current layout
+/// constraints, with optional per-breakpoint size overrides.
+///
+/// The builder receives a scoped [ResHelper] whose screen size is updated
+/// on every layout pass from [LayoutBuilder] constraints.
 class ResPageSizer extends StatefulWidget {
-  final Widget Function(
-          BuildContext context, BoxConstraints constraints, ResHelper rs)
-      builder;
-
   const ResPageSizer({
     super.key,
     required this.builder,
@@ -23,8 +22,16 @@ class ResPageSizer extends StatefulWidget {
     this.reSizePlat,
   });
 
-  /// plats size =>control in plat size
+  final Widget Function(
+    BuildContext context,
+    BoxConstraints constraints,
+    ResHelper rs,
+  ) builder;
+
+  /// Optional global breakpoint rescaler applied to all sizes.
   final Size? Function(Size max)? reSizePlat;
+
+  /// Per-breakpoint size overrides (takes priority over [reSizePlat]).
   final Size Function(Size max)? mobSSize;
   final Size Function(Size max)? mobMSize;
   final Size Function(Size max)? mobLSize;
@@ -43,22 +50,25 @@ class _ResPageSizerState extends State<ResPageSizer> {
   late ResHelper rs;
 
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _buildHelper();
+  }
 
-    final of = MyRes.of(context);
-    rs = MyRes.instance(
-     context:  context,
-      mobSSize:( widget.mobSSize??widget.reSizePlat)?.call(of.mobSSize),
-      mobMSize: (widget.mobMSize??widget.reSizePlat)?.call(of.mobMSize),
-      mobLSize: (widget.mobLSize??widget.reSizePlat)?.call(of.mobLSize),
-      tabSSize: (widget.tabSSize??widget.reSizePlat)?.call(of.tabSSize),
-      tabMSize: (widget.tabMSize??widget.reSizePlat)?.call(of.tabMSize),
-      tabLSize: (widget.tabLSize??widget.reSizePlat)?.call(of.tabLSize),
-      deskSSize: (widget.deskSSize??widget.reSizePlat)?.call(of.deskSSize),
-      deskMSize: (widget.deskMSize??widget.reSizePlat)?.call(of.deskMSize),
-      deskLSize: (widget.deskLSize??widget.reSizePlat)?.call(of.deskLSize),
+  void _buildHelper() {
+    final ref = ResHelper.instance; // read breakpoint sizes from singleton
+    rs = ResHelper.scoped(
+      screenSize: ref.screenSize,
+      mobSSize: (widget.mobSSize ?? widget.reSizePlat)?.call(ref.mobSSize),
+      mobMSize: (widget.mobMSize ?? widget.reSizePlat)?.call(ref.mobMSize),
+      mobLSize: (widget.mobLSize ?? widget.reSizePlat)?.call(ref.mobLSize),
+      tabSSize: (widget.tabSSize ?? widget.reSizePlat)?.call(ref.tabSSize),
+      tabMSize: (widget.tabMSize ?? widget.reSizePlat)?.call(ref.tabMSize),
+      tabLSize: (widget.tabLSize ?? widget.reSizePlat)?.call(ref.tabLSize),
+      deskSSize: (widget.deskSSize ?? widget.reSizePlat)?.call(ref.deskSSize),
+      deskMSize: (widget.deskMSize ?? widget.reSizePlat)?.call(ref.deskMSize),
+      deskLSize: (widget.deskLSize ?? widget.reSizePlat)?.call(ref.deskLSize),
     );
-    super.initState();
   }
 
   @override

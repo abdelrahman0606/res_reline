@@ -1,100 +1,125 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'main_responsive.dart';
+import 'package:res_reline/src/res_functions/main_helper.dart';
+
+// ─── num extensions ─────────────────────────────────────────────────────────
 
 extension SizeExtension on num {
-  static BuildContext? context;
-  double  to(context,double to) => MyRes.of(context).anySizeBetween(toDouble(), to);
-  double  from(context,double from) => MyRes.of(context).anySizeBetween(toDouble(), from);
-  double  ph(context) => MyRes.of(context).padding(toDouble());
+  // ── Scaling ──────────────────────────────────────────────────────────────
 
+  /// Scale by design width  (baseWidth = 375).
+  double get w => ResHelper.instance.setWidth(toDouble());
 
-  ///padding
-  EdgeInsetsDirectional get pdh => EdgeInsetsDirectional.symmetric(horizontal: toDouble());
-  EdgeInsetsDirectional get pdv => EdgeInsetsDirectional.symmetric(vertical: toDouble());
-  EdgeInsetsDirectional get pdh__pdv => EdgeInsetsDirectional.symmetric(vertical: toDouble());
+  /// Scale by design height for layout (baseHeightForSetHeight = 700).
+  double get setH => ResHelper.instance.setHeight(toDouble());
 
+  /// Scale by screen height for fonts/proportions (baseHeight = 812).
+  double get h => ResHelper.instance.h(toDouble());
+  double get s => ResHelper.instance.h(toDouble());
+  double get r => ResHelper.instance.r(toDouble());
 
-  double get w => MyRes.of().setWith(toDouble());
+  /// Scale as a font size.
+  double get sp => ResHelper.instance.setSp(toDouble());
 
-  double get h => MyRes.of().setHeight(toDouble());
-
-  double get r => toDouble();
-
-
-  double get sp => MyRes.of().setSp(toDouble());
-
+  /// Minimum of the raw value and the scaled font size.
   double get spMin => min(toDouble(), sp);
+
+  // ── Responsive range helpers ─────────────────────────────────────────────
+
+  /// Returns a value interpolated between [this] (small) and [to] (large)
+  /// based on the current breakpoint.
+  double to(double to) => ResHelper.instance.anySizeBetween(toDouble(), to);
+
+  /// Alias — interpolates between [from] (small) and [this] (large).
+  double from(double from) =>
+      ResHelper.instance.anySizeBetween(from, toDouble());
+
+  // ── Padding helpers ──────────────────────────────────────────────────────
+
+  /// Responsive horizontal padding (uses [ResHelper.padding]).
+  double get ph => ResHelper.instance.padding(toDouble());
+
+  /// Symmetric horizontal [EdgeInsetsDirectional].
+  EdgeInsetsDirectional get pdh =>
+      EdgeInsetsDirectional.symmetric(horizontal: toDouble());
+
+  /// Symmetric vertical [EdgeInsetsDirectional].
+  EdgeInsetsDirectional get pdv =>
+      EdgeInsetsDirectional.symmetric(vertical: toDouble());
+
+  /// Symmetric on both axes [EdgeInsetsDirectional].
+  EdgeInsetsDirectional get pdAll => EdgeInsetsDirectional.all(toDouble());
 }
 
-extension BorderRaduisExtension on BorderRadius {
-  /// Creates adapt BorderRadius using r [SizeExtension].
-  BorderRadius get r => copyWith(
-        bottomLeft: bottomLeft.r,
-        bottomRight: bottomRight.r,
-        topLeft: topLeft.r,
-        topRight: topRight.r,
-      );
+// ─── BorderRadius extensions ─────────────────────────────────────────────────
 
+extension BorderRadiusExtension on BorderRadius {
+  /// Scales each corner radius by width.
   BorderRadius get w => copyWith(
-        bottomLeft: bottomLeft.w,
-        bottomRight: bottomRight.w,
-        topLeft: topLeft.w,
-        topRight: topRight.w,
-      );
+    bottomLeft: bottomLeft.w,
+    bottomRight: bottomRight.w,
+    topLeft: topLeft.w,
+    topRight: topRight.w,
+  );
 
+  /// Scales each corner radius by height.
   BorderRadius get h => copyWith(
-        bottomLeft: bottomLeft.h,
-        bottomRight: bottomRight.h,
-        topLeft: topLeft.h,
-        topRight: topRight.h,
-      );
+    bottomLeft: bottomLeft.h,
+    bottomRight: bottomRight.h,
+    topLeft: topLeft.h,
+    topRight: topRight.h,
+  );
 }
 
-extension RaduisExtension on Radius {
-  /// Creates adapt Radius using r [SizeExtension].
-  Radius get r => Radius.elliptical(x.r, y.r);
+// ─── Radius extensions ───────────────────────────────────────────────────────
 
-  Radius get w => Radius.elliptical(x.w, y.w);
+extension RadiusExtension on Radius {
+  /// Scales both elliptical values by width.
+  Radius get w => Radius.elliptical(
+    ResHelper.instance.setWidth(x),
+    ResHelper.instance.setWidth(y),
+  );
 
-  Radius get h => Radius.elliptical(x.h, y.h);
+  /// Scales both elliptical values by height.
+  Radius get h => Radius.elliptical(
+    ResHelper.instance.setHeight(x),
+    ResHelper.instance.setHeight(y),
+  );
 }
+
+// ─── BoxConstraints extensions ───────────────────────────────────────────────
 
 extension BoxConstraintsExtension on BoxConstraints {
-  /// Creates adapt BoxConstraints using r [SizeExtension].
-  BoxConstraints get r => copyWith(
-        maxHeight: maxHeight.r,
-        maxWidth: maxWidth.r,
-        minHeight: minHeight.r,
-        minWidth: minWidth.r,
-      );
-
-  /// Creates adapt BoxConstraints using h-w [SizeExtension].
-  BoxConstraints get hw => copyWith(
-        maxHeight: maxHeight.h,
-        maxWidth: maxWidth.w,
-        minHeight: minHeight.h,
-        minWidth: minWidth.w,
-      );
-
+  /// Scales all four bounds by width.
   BoxConstraints get w => copyWith(
-        maxHeight: maxHeight.w,
-        maxWidth: maxWidth.w,
-        minHeight: minHeight.w,
-        minWidth: minWidth.w,
-      );
+    maxHeight: ResHelper.instance.setWidth(maxHeight),
+    maxWidth: ResHelper.instance.setWidth(maxWidth),
+    minHeight: ResHelper.instance.setWidth(minHeight),
+    minWidth: ResHelper.instance.setWidth(minWidth),
+  );
 
+  /// Scales all four bounds by height.
   BoxConstraints get h => copyWith(
-        maxHeight: maxHeight.h,
-        maxWidth: maxWidth.h,
-        minHeight: minHeight.h,
-        minWidth: minWidth.h,
-      );
-}
-extension SizeEx on Size {
-  Size  add(width,height) =>Size(this.width+width,this.height+height);
-  Size  sub(width,height) =>Size(this.width-width,this.height-height);
-  Size  addWidth(width) =>Size(this.width+width,height);
-  Size  subWidth(width) =>Size(this.width-width,height);
+    maxHeight: ResHelper.instance.setHeight(maxHeight),
+    maxWidth: ResHelper.instance.setHeight(maxWidth),
+    minHeight: ResHelper.instance.setHeight(minHeight),
+    minWidth: ResHelper.instance.setHeight(minWidth),
+  );
 
+  /// Scales width bounds by width and height bounds by height.
+  BoxConstraints get hw => copyWith(
+    maxHeight: ResHelper.instance.setHeight(maxHeight),
+    maxWidth: ResHelper.instance.setWidth(maxWidth),
+    minHeight: ResHelper.instance.setHeight(minHeight),
+    minWidth: ResHelper.instance.setWidth(minWidth),
+  );
+}
+
+// ─── Size extensions ─────────────────────────────────────────────────────────
+
+extension SizeEx on Size {
+  Size add(double w, double h) => Size(width + w, height + h);
+  Size sub(double w, double h) => Size(width - w, height - h);
+  Size addWidth(double w) => Size(width + w, height);
+  Size subWidth(double w) => Size(width - w, height);
 }

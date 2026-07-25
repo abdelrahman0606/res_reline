@@ -17,9 +17,9 @@ class ResLayoutData {
     required this.desktopBreakpoint,
   });
 
-  bool get isMobile => screenType == ScreenType.isMobileM;
-  bool get isTablet => screenType == ScreenType.isTabletM;
-  bool get isDesktop => screenType == ScreenType.isDesktopM;
+  bool get isMobile => screenType == ScreenType.mobileM;
+  bool get isTablet => screenType == ScreenType.tabletM;
+  bool get isDesktop => screenType == ScreenType.desktopM;
 }
 
 class _ResLayoutInherited extends InheritedWidget {
@@ -84,21 +84,21 @@ class ResLayoutBreak extends StatelessWidget {
 
   static ScreenType _getScreenTypeStatic(double width, double mobileBreakpoint, double desktopBreakpoint) {
     if (width < mobileBreakpoint) {
-      return ScreenType.isMobileM;
+      return ScreenType.mobileM;
     } else if (width < desktopBreakpoint) {
-      return ScreenType.isTabletM;
+      return ScreenType.tabletM;
     } else {
-      return ScreenType.isDesktopM;
+      return ScreenType.desktopM;
     }
   }
 
   ScreenType _getScreenType(double width) {
     if (width < mobileBreakpoint) {
-      return ScreenType.isMobileM;
+      return ScreenType.mobileM;
     } else if (width < desktopBreakpoint) {
-      return ScreenType.isTabletM;
+      return ScreenType.tabletM;
     } else {
-      return ScreenType.isDesktopM;
+      return ScreenType.desktopM;
     }
   }
 
@@ -119,9 +119,9 @@ class ResLayoutBreak extends StatelessWidget {
         );
 
         final Widget layout;
-        if (screenType == ScreenType.isMobileM) {
+        if (screenType == ScreenType.mobileM) {
           layout = mobile(context, constraints);
-        } else if (screenType == ScreenType.isTabletM) {
+        } else if (screenType == ScreenType.tabletM) {
           layout = tablet?.call(context, constraints) ?? desktop(context, constraints);
         } else {
           layout = desktop(context, constraints);

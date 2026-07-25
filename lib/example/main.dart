@@ -82,7 +82,7 @@ class MyHomePage extends StatelessWidget {
 
 Widget _container(ResHelper rs) => Container(
   color: Colors.red,
-  width: rs.setWith(100),
+  width: rs.setWidth(100),
   height: rs.setHeight(100),
   child: Text(
     rs.any(

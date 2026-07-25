@@ -59,7 +59,7 @@ class _ResPageSizerExampleState extends State<ResPageSizerExample> {
           child: Center(child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("${rs.getPlat.toMap}\n${rs.getPlatSize.toString()}"),
+              Text("${rs.plat.toMap}\n${rs.platSize.toString()}"),
               Container(
                 width: rs.any(100, 80, 50),
                 height:rs.any(100, 80, 50),
