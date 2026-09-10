@@ -1,61 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class SliverGridDelegateWithResponsiveColumns extends SliverGridDelegate {
-  final double minColumnWidth;
-  final double childAspectRatio;
-  final double crossAxisSpacing;
-  final double mainAxisSpacing;
-  final double? childAspectRatioOne;
-
-  final Function(int crossAxisCount,double childHeight)? onCrossAxisCountChanged;
-  const SliverGridDelegateWithResponsiveColumns({
-    required this.minColumnWidth,
-    required this.childAspectRatio,
-    this.crossAxisSpacing = 0,
-    this.mainAxisSpacing = 0,
-    this.onCrossAxisCountChanged,
-    this.childAspectRatioOne,
-  });
-
-  @override
-  SliverGridLayout getLayout(SliverConstraints constraints) {
-
-
-
-
-    final availableWidth = constraints.crossAxisExtent;
-    final columnsCount = (availableWidth / minColumnWidth).floor();
-    final actualColumnsCount = columnsCount < 1 ? 1 : columnsCount;
-
-    final columnWidth =
-        (availableWidth - (actualColumnsCount - 1) * crossAxisSpacing) /
-            actualColumnsCount;
-
-
-    final aspectRatio = actualColumnsCount == 1
-        ? childAspectRatioOne ?? childAspectRatio
-        : childAspectRatio;
-    final childHeight = columnWidth / aspectRatio;
-
-
-
-
-
-    onCrossAxisCountChanged?.call(actualColumnsCount,childHeight);
-
-    return SliverGridRegularTileLayout(
-      crossAxisCount: actualColumnsCount,
-      mainAxisStride: childHeight + mainAxisSpacing,
-      crossAxisStride: columnWidth + crossAxisSpacing,
-      childMainAxisExtent: childHeight,
-      childCrossAxisExtent: columnWidth,
-      reverseCrossAxis: false,
-    );
-  }
-
-  @override
-  bool shouldRelayout(covariant SliverGridDelegate oldDelegate) => true;
-}
 class ResponsiveSliverGridDelegate extends SliverGridDelegate {
   const ResponsiveSliverGridDelegate({
     required this.minItemWidth,
@@ -106,12 +51,12 @@ class ResponsiveSliverGridDelegate extends SliverGridDelegate {
   @override
   bool shouldRelayout(ResponsiveSliverGridDelegate oldDelegate) {
     return oldDelegate.minItemWidth != minItemWidth ||
-        oldDelegate.maxItemWidth != maxItemWidth ||
-        oldDelegate.itemHeight != itemHeight ||
-        oldDelegate.mainAxisSpacing != mainAxisSpacing ||
-        oldDelegate.crossAxisSpacing != crossAxisSpacing ||
-        oldDelegate.lastItemTakesRemainingWidth != lastItemTakesRemainingWidth ||
-        oldDelegate.itemCount != itemCount;
+           oldDelegate.maxItemWidth != maxItemWidth ||
+           oldDelegate.itemHeight != itemHeight ||
+           oldDelegate.mainAxisSpacing != mainAxisSpacing ||
+           oldDelegate.crossAxisSpacing != crossAxisSpacing ||
+           oldDelegate.lastItemTakesRemainingWidth != lastItemTakesRemainingWidth ||
+           oldDelegate.itemCount != itemCount;
   }
 }
 
