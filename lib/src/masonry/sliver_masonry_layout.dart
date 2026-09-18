@@ -1,14 +1,15 @@
 import 'dart:math' as math;
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'masonry_layout.dart';
-part 'render_sliver_masonry_layout.dart';
 
 /// {@template sliver_masonry_layout}
 /// A real-sliver counterpart to [MasonryLayout]: a responsive body/side
 /// layout that participates directly in a [CustomScrollView] — no
 /// [SliverToBoxAdapter], no nested scrollable.
+///
+/// Unlike [MasonryLayout], [SliverMasonryLayout] expects its items to
+/// produce **Sliver** widgets (e.g. `SliverList`, `SliverGrid`, `SliverToBoxAdapter`).
 ///
 /// The same three-mode model as [MasonryLayout] applies:
 ///
@@ -20,32 +21,6 @@ part 'render_sliver_masonry_layout.dart';
 ///
 /// Items may provide a [MasonryItem.builder] to react to the current
 /// `toggle` state and the `maxWidth` they have been allocated.
-///
-/// ```dart
-/// CustomScrollView(
-///   slivers: [
-///     SliverMasonryLayout(
-///       gap: 12,
-///       bodyMinWidth: 700,
-///       sideMinWidth: 280,
-///       bodyMaxWidth: 900,
-///       sideMaxWidth: 320,
-///       isSideExpanded: false,
-///       children: [
-///         MasonryItem(child: Header(), width: MasonryWidth.full),
-///         MasonryItem(
-///           width: MasonryWidth.body,
-///           builder: (toggle, maxWidth) => Feed(compact: toggle),
-///         ),
-///         MasonryItem(child: Panel(), width: MasonryWidth.side),
-///       ],
-///     ),
-///   ],
-/// )
-/// ```
-///
-/// See [RenderSliverMasonryLayout] for implementation notes on why all
-/// children are laid out on every pass rather than virtualized.
 /// {@endtemplate}
 class SliverMasonryLayout extends StatelessWidget {
   /// {@macro sliver_masonry_layout}
@@ -61,7 +36,7 @@ class SliverMasonryLayout extends StatelessWidget {
     this.bodyFactory,
   });
 
-  /// Items to lay out.
+  /// Items to lay out. Each item should produce a **Sliver** widget.
   final List<MasonryItem> children;
 
   /// Spacing applied between zones and between items within each zone.
@@ -103,9 +78,10 @@ class SliverMasonryLayout extends StatelessWidget {
     double bodyW, sideW;
     if (isSideExpanded) {
       // Body dominant: grow body up to bodyMaxWidth, then give remainder to side.
-      bodyW = bodyMaxWidth != null
-          ? math.min(crossExtent, bodyMaxWidth!)
-          : crossExtent;
+      bodyW =
+          bodyMaxWidth != null
+              ? math.min(crossExtent, bodyMaxWidth!)
+              : crossExtent;
       sideW = crossExtent - bodyW - gap;
       // Ensure side meets its minimum — steal from body if necessary.
       if (sideW < sideMinWidth) {
@@ -114,15 +90,54 @@ class SliverMasonryLayout extends StatelessWidget {
       }
     } else {
       // Side gets its preferred width, floored at sideMinWidth.
-      sideW = sideMaxWidth != null
-          ? math.min(crossExtent - gap, sideMaxWidth!)
-          : crossExtent * 0.3;
+      sideW =
+          sideMaxWidth != null
+              ? math.min(crossExtent - gap, sideMaxWidth!)
+              : crossExtent * 0.3;
       sideW = math.max(sideW, sideMinWidth);
       bodyW = crossExtent - sideW - gap;
     }
     // Fall back to single-column if either zone is below its minimum.
     if (sideW < sideMinWidth || bodyW < bodyMinWidth) return (crossExtent, 0.0);
     return (bodyW, sideW);
+  }
+
+  Widget _buildBody(List<Widget> bodySlivers, double bodyW) {
+    if (bodySlivers.isEmpty) return const SliverToBoxAdapter();
+    final int tracksCount = bodyFactory != null ? bodyFactory!(bodyW) : 1;
+
+    if (tracksCount <= 1) {
+      return SliverMainAxisGroup(slivers: bodySlivers);
+    }
+
+    // Split into sub-tracks (round-robin)
+    final List<List<Widget>> tracks = List.generate(
+      tracksCount,
+      (_) => <Widget>[],
+    );
+    for (int i = 0; i < bodySlivers.length; i++) {
+      tracks[i % tracksCount].add(bodySlivers[i]);
+    }
+
+    final double trackW = (bodyW - gap * (tracksCount - 1)) / tracksCount;
+    final List<Widget> trackGroup = [];
+    for (int i = 0; i < tracksCount; i++) {
+      trackGroup.add(
+        SliverConstrainedCrossAxis(
+          maxExtent: trackW,
+          sliver: SliverMainAxisGroup(slivers: tracks[i]),
+        ),
+      );
+      if (i < tracksCount - 1) {
+        trackGroup.add(
+          SliverConstrainedCrossAxis(
+            maxExtent: gap,
+            sliver: const SliverToBoxAdapter(),
+          ),
+        );
+      }
+    }
+    return SliverCrossAxisGroup(slivers: trackGroup);
   }
 
   @override
@@ -138,104 +153,110 @@ class SliverMasonryLayout extends StatelessWidget {
 
         // ── Zone widths ─────────────────────────────────────────────────
         final (double bodyW, double sideW) =
-            (!collapsed && !inToggle) ? _zoneWidths(crossExtent) : (crossExtent, 0.0);
+            (!collapsed && !inToggle)
+                ? _zoneWidths(crossExtent)
+                : (crossExtent, 0.0);
 
         // ── Resolve each item ────────────────────────────────────────────
-        final builtChildren = <Widget>[];
-        for (final item in children) {
-          final double itemWidth;
-          final bool itemToggle;
-
-          if (collapsed) {
-            itemWidth = crossExtent;
-            itemToggle = false;
-          } else if (inToggle) {
-            itemWidth = crossExtent;
-            itemToggle = item.width == MasonryWidth.full ||
+        if (collapsed) {
+          final List<Widget> slivers = [];
+          for (final item in children) {
+            slivers.add(item.resolve(false, crossExtent));
+          }
+          return SliverMainAxisGroup(slivers: slivers);
+        } else if (inToggle) {
+          final List<Widget> slivers = [];
+          for (final item in children) {
+            final bool itemToggle =
+                item.width == MasonryWidth.full ||
                 (item.width == MasonryWidth.body && isSideExpanded) ||
                 (item.width == MasonryWidth.side && !isSideExpanded);
-          } else {
-            itemToggle = false;
-            itemWidth = switch (item.width) {
-              MasonryWidth.full => crossExtent,
-              MasonryWidth.body => bodyW,
-              MasonryWidth.side => sideW > 0 ? sideW : bodyW,
-            };
+            if (itemToggle) {
+              slivers.add(item.resolve(true, crossExtent));
+            }
+          }
+          return SliverMainAxisGroup(slivers: slivers);
+        } else {
+          // ── Two-column Mode ───────────────────────────────────────────
+          final List<Widget> finalSlivers = [];
+          List<Widget> currentBody = [];
+          List<Widget> currentSide = [];
+
+          void flushColumns() {
+            if (currentBody.isEmpty && currentSide.isEmpty) return;
+
+            final Widget bodyWidget = _buildBody(currentBody, bodyW);
+            final Widget sideWidget =
+                currentSide.isEmpty
+                    ? const SliverToBoxAdapter()
+                    : SliverMainAxisGroup(slivers: currentSide);
+
+            if (currentBody.isEmpty) {
+              finalSlivers.add(
+                SliverCrossAxisGroup(
+                  slivers: [
+                    SliverConstrainedCrossAxis(
+                      maxExtent: bodyW + gap,
+                      sliver: const SliverToBoxAdapter(),
+                    ),
+                    SliverConstrainedCrossAxis(
+                      maxExtent: sideW,
+                      sliver: sideWidget,
+                    ),
+                  ],
+                ),
+              );
+            } else if (currentSide.isEmpty) {
+              finalSlivers.add(
+                SliverCrossAxisGroup(
+                  slivers: [
+                    SliverConstrainedCrossAxis(
+                      maxExtent: bodyW,
+                      sliver: bodyWidget,
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              finalSlivers.add(
+                SliverCrossAxisGroup(
+                  slivers: [
+                    SliverConstrainedCrossAxis(
+                      maxExtent: bodyW,
+                      sliver: bodyWidget,
+                    ),
+                    SliverConstrainedCrossAxis(
+                      maxExtent: gap,
+                      sliver: const SliverToBoxAdapter(),
+                    ),
+                    SliverConstrainedCrossAxis(
+                      maxExtent: sideW,
+                      sliver: sideWidget,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            currentBody = [];
+            currentSide = [];
           }
 
-          builtChildren.add(item.resolve(itemToggle, itemWidth));
-        }
+          for (final item in children) {
+            if (item.width == MasonryWidth.full) {
+              flushColumns();
+              finalSlivers.add(item.resolve(false, crossExtent));
+            } else if (item.width == MasonryWidth.body) {
+              currentBody.add(item.resolve(false, bodyW));
+            } else if (item.width == MasonryWidth.side) {
+              currentSide.add(item.resolve(false, sideW));
+            }
+          }
+          flushColumns();
 
-        return _SliverMasonryLayoutImpl(
-          widths: children.map((e) => e.width).toList(growable: false),
-          gap: gap,
-          bodyMinWidth: bodyMinWidth,
-          sideMinWidth: sideMinWidth,
-          bodyMaxWidth: bodyMaxWidth,
-          sideMaxWidth: sideMaxWidth,
-          isSideExpanded: isSideExpanded,
-          bodyFactory: bodyFactory,
-          children: builtChildren,
-        );
+          return SliverMainAxisGroup(slivers: finalSlivers);
+        }
       },
     );
-  }
-}
-
-// ── Internal render-object widget ────────────────────────────────────────────
-
-/// The internal [MultiChildRenderObjectWidget] powering [SliverMasonryLayout].
-///
-/// Prefer [SliverMasonryLayout] directly.
-class _SliverMasonryLayoutImpl extends MultiChildRenderObjectWidget {
-  _SliverMasonryLayoutImpl({
-    required List<MasonryWidth> widths,
-    required this.gap,
-    required this.bodyMinWidth,
-    required this.sideMinWidth,
-    this.bodyMaxWidth,
-    this.sideMaxWidth,
-    required this.isSideExpanded,
-    this.bodyFactory,
-    required super.children,
-  }) : _widths = List<MasonryWidth>.unmodifiable(widths);
-
-  final double gap;
-  final double bodyMinWidth;
-  final double sideMinWidth;
-  final double? bodyMaxWidth;
-  final double? sideMaxWidth;
-  final bool isSideExpanded;
-  final int Function(double)? bodyFactory;
-  final List<MasonryWidth> _widths;
-
-  @override
-  RenderSliverMasonryLayout createRenderObject(BuildContext context) {
-    return RenderSliverMasonryLayout(
-      sizes: _widths,
-      gap: gap,
-      bodyMinWidth: bodyMinWidth,
-      sideMinWidth: sideMinWidth,
-      bodyMaxWidth: bodyMaxWidth,
-      sideMaxWidth: sideMaxWidth,
-      isSideExpanded: isSideExpanded,
-      bodyFactory: bodyFactory,
-    );
-  }
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    RenderSliverMasonryLayout renderObject,
-  ) {
-    renderObject
-      ..sizes = _widths
-      ..gap = gap
-      ..bodyMinWidth = bodyMinWidth
-      ..sideMinWidth = sideMinWidth
-      ..bodyMaxWidth = bodyMaxWidth
-      ..sideMaxWidth = sideMaxWidth
-      ..isSideExpanded = isSideExpanded
-      ..bodyFactory = bodyFactory;
   }
 }
