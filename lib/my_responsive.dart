@@ -26,3 +26,7 @@ export 'src/pages/sliver_page_sizer.dart';
 
 // ── Tools ────────────────────────────────────────────────────────────────────
 export 'src/tools/sliver_grid_delegate.dart';
+
+// ── Masonry Layout ────────────────────────────────────────────────────────────────
+export 'src/masonry/masonry_layout.dart';
+export 'src/masonry/sliver_masonry_layout.dart';
